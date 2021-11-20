@@ -2,12 +2,31 @@ package restApi.imgur;
 
 public final class Endpoints {
 
-    public static String API_URL = "https://api.imgur.com";
-    public static String BASE_URI =
-            API_URL + "/" + ImgurApiParams.API_VER + "/album/" + ImgurApiParams.ALBUM_HASH;
-    public static String ALBUM_URL = "/image/" + ImgurApiParams.IMAGE_HASH;
-    public static String ADD_IMAGE_URL= "/add";
-    public static String REMOVE_IMAGE_URL = "/remove_images";
-    public static String FAVOURITE_URL = "/favorite";
+    private static final String API_URL = "https://api.imgur.com";
+    private static final String BASE_URI =
+            API_URL + "/" + ImgurApiParams.getApiVer() + "/album/" + ImgurApiParams.getAlbumHash();
+    private static final String ALBUM_URL = "/image/" + ImgurApiParams.getImageHash();
+    private static final String ADD_IMAGE_URL = "/add";
+    private static final String REMOVE_IMAGE_URL = "/remove_images";
+    private static final String FAVOURITE_URL = "/favorite";
 
+    public static String getBaseUri() {
+        return BASE_URI;
+    }
+
+    public static String getAlbumUrl() {
+        return ALBUM_URL;
+    }
+
+    public static String getAddImageUrl() {
+        return ADD_IMAGE_URL;
+    }
+
+    public static String getRemoveImageUrl() {
+        return REMOVE_IMAGE_URL;
+    }
+
+    public static String getFavouriteUrl() {
+        return FAVOURITE_URL;
+    }
 }

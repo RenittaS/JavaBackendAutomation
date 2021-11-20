@@ -20,13 +20,13 @@ public class ImgurApiAlbumTest {
             .build();
 
     static RequestSpecification requestSpecification = new RequestSpecBuilder()
-            .setAuth(oauth2(ImgurApiParams.TOKEN))
+            .setAuth(oauth2(ImgurApiParams.getTOKEN()))
             .build();
 
 
     @BeforeAll
     static void beforeAll() {
-        RestAssured.baseURI = Endpoints.BASE_URI;
+        RestAssured.baseURI = Endpoints.getBaseUri();
     }
 
     @DisplayName("Status code is 200")
@@ -50,7 +50,8 @@ public class ImgurApiAlbumTest {
         given().spec(requestSpecification)
                 .when()
                 .log().all()
-                .then()
+                //.then()
+                .expect()
                 .time(lessThan (5000L))
                 .log().all()
                 .when()
@@ -65,7 +66,7 @@ public class ImgurApiAlbumTest {
                 .when()
                 .log().all()
                 .expect()
-                .body("data.id", is(ImgurApiParams.ALBUM_HASH))
+                .body("data.id", is(ImgurApiParams.getAlbumHash()))
                 .log().all()
                 .when()
                 .get(baseURI);
@@ -111,7 +112,7 @@ public class ImgurApiAlbumTest {
                 .body("success", is(true))
                 .log().all()
                 .when()
-                .post(baseURI + Endpoints.FAVOURITE_URL);
+                .post(baseURI + Endpoints.getFavouriteUrl());
     }
 
     @DisplayName("Update Album title")
@@ -120,11 +121,11 @@ public class ImgurApiAlbumTest {
     void testUpdateTitle() {
         given().spec(requestSpecification)
                 .when()
-                .log().all()
                 .formParam("title", "My new work album")
-                .expect()
                 .log().all()
+                .expect()
                 .spec(responseSpecification)
+                .log().all()
                 .when()
                 .put(baseURI);
     }
@@ -135,7 +136,7 @@ public class ImgurApiAlbumTest {
     void testAlbumImage() {
         ResponseSpecification responseSpecification = new ResponseSpecBuilder()
                 .expectBody("data.title", is("The best pop art image"))
-                .expectBody("data.id", is(ImgurApiParams.IMAGE_HASH))
+                .expectBody("data.id", is(ImgurApiParams.getImageHash()))
                 .build();
 
         given().spec(requestSpecification)
@@ -145,54 +146,56 @@ public class ImgurApiAlbumTest {
                 .spec(responseSpecification)
                 .log().all()
                 .when()
-                .get(baseURI + Endpoints.ALBUM_URL);
+                .get(baseURI + Endpoints.getAlbumUrl());
     }
 
     @DisplayName("Add image to Album")
     @Test
     @Order(9)
     void testAddImage() {
-//        RequestSpecification imageRequestSpecification = new RequestSpecBuilder()
-//                .addHeader("Authorization", ImgurApiParams.TOKEN)
-//                .addFormParam("ids[]", "zNRHIng")
-//                .build();
+        RequestSpecification requestSpecification = new RequestSpecBuilder()
+                .setAuth(oauth2(ImgurApiParams.getTOKEN()))
+                .addFormParam("ids[]", "zNRHIng")
+                .build();
 
         given().spec(requestSpecification)
                 .when()
                 .log().all()
-                //.spec(imageRequestSpecification)
-                .formParam("ids[]", "zNRHIng")
                 .expect()
-                .log().all()
                 .spec(responseSpecification)
+                .log().all()
                 .when()
-                .post(baseURI + Endpoints.ADD_IMAGE_URL);
+                .post(baseURI + Endpoints.getAddImageUrl());
     }
 
     @DisplayName("Remove image from Album")
     @Test
     @Order(10)
     void testRemoveImage() {
+        RequestSpecification requestSpecification = new RequestSpecBuilder()
+                .setAuth(oauth2(ImgurApiParams.getTOKEN()))
+                .addFormParam("ids[]", "zNRHIng")
+                .build();
+
         given().spec(requestSpecification)
                 .when()
                 .log().all()
-                .formParam("ids[]", "zNRHIng")
                 .expect()
-                .log().all()
                 .spec(responseSpecification)
+                .log().all()
                 .when()
-                .post(baseURI + Endpoints.REMOVE_IMAGE_URL);
+                .post(baseURI + Endpoints.getRemoveImageUrl());
     }
 
     @AfterAll
     static void tearDown() {
         given().spec(requestSpecification)
                 .when()
-                .log().all()
                 .formParam("data.title", "My new work album")
-                .expect()
                 .log().all()
+                .expect()
                 .spec(responseSpecification)
+                .log().all()
                 .when()
                 .put(baseURI);
     }
