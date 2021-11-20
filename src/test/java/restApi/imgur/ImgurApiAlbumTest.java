@@ -1,35 +1,45 @@
 package restApi.imgur;
 
 import io.restassured.RestAssured;
+import io.restassured.authentication.AuthenticationScheme;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.specification.RequestSpecification;
+import io.restassured.specification.ResponseSpecification;
 import org.junit.jupiter.api.*;
 
-import static io.restassured.RestAssured.baseURI;
-import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.*;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.Matchers.lessThan;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ImgurApiAlbumTest {
 
+    static ResponseSpecification responseSpecification = new ResponseSpecBuilder()
+            .expectBody("success", is(true))
+            .expectBody("data", is(true))
+            .build();
+
+    static RequestSpecification requestSpecification = new RequestSpecBuilder()
+            .setAuth(oauth2(ImgurApiParams.TOKEN))
+            .build();
+
+
     @BeforeAll
     static void beforeAll() {
-        RestAssured.baseURI =
-                ImgurApiParams.API_URL + "/" + ImgurApiParams.API_VER + "/album/" + ImgurApiParams.ALBUM_HASH;
+        RestAssured.baseURI = Endpoints.BASE_URI;
     }
 
     @DisplayName("Status code is 200")
     @Test
     @Order(1)
     void testStatusCode() {
-        given().when()
-                .auth()
-                .oauth2(ImgurApiParams.TOKEN)
-                .log()
-                .all()
+        given().spec(requestSpecification)
+                .when()
+                .log().all()
                 .expect()
-                .statusCode(is(200))
-                .log()
-                .all()
+                .statusCode(200)
+                .log().all()
                 .when()
                 .get(baseURI);
     }
@@ -38,15 +48,12 @@ public class ImgurApiAlbumTest {
     @Test
     @Order(2)
     void testResponseTime() {
-        given().when()
-                .auth()
-                .oauth2(ImgurApiParams.TOKEN)
-                .log()
-                .all()
+        given().spec(requestSpecification)
+                .when()
+                .log().all()
                 .then()
-                .time(lessThan (5000l))
-                .log()
-                .all()
+                .time(lessThan (5000L))
+                .log().all()
                 .when()
                 .get(baseURI);
     }
@@ -55,15 +62,12 @@ public class ImgurApiAlbumTest {
     @Test
     @Order(3)
     void testId() {
-        given().when()
-                .auth()
-                .oauth2(ImgurApiParams.TOKEN)
-                .log()
-                .all()
+        given().spec(requestSpecification)
+                .when()
+                .log().all()
                 .expect()
                 .body("data.id", is(ImgurApiParams.ALBUM_HASH))
-                .log()
-                .all()
+                .log().all()
                 .when()
                 .get(baseURI);
     }
@@ -72,15 +76,12 @@ public class ImgurApiAlbumTest {
     @Test
     @Order(4)
     void testTitle() {
-        given().when()
-                .auth()
-                .oauth2(ImgurApiParams.TOKEN)
-                .log()
-                .all()
+        given().spec(requestSpecification)
+                .when()
+                .log().all()
                 .expect()
                 .body("data.title", is("My new work album"))
-                .log()
-                .all()
+                .log().all()
                 .when()
                 .get(baseURI);
     }
@@ -89,15 +90,13 @@ public class ImgurApiAlbumTest {
     @Test
     @Order(5)
     void testDescription() {
-        given().when()
-                .auth()
-                .oauth2(ImgurApiParams.TOKEN)
-                .log()
-                .all()
+        given().spec(requestSpecification)
+                .when()
+                .log().all()
                 .expect()
-                .body("data.description", is("This albums contains a lot of pop art pictures. Be prepared to be surprised. Kisses!"))
-                .log()
-                .all()
+                .body("data.description", is("This albums contains a lot of pop art pictures. Be prepared to " +
+                        "be surprised. Kisses!"))
+                .log().all()
                 .when()
                 .get(baseURI);
     }
@@ -106,35 +105,27 @@ public class ImgurApiAlbumTest {
     @Test
     @Order(6)
     void testSetFavouriteAlbum() {
-        String url = "/favorite";
-        given().when()
-                .auth()
-                .oauth2(ImgurApiParams.TOKEN)
-                .log()
-                .all()
+        given().spec(requestSpecification)
+                .when()
+                .log().all()
                 .expect()
                 .body("success", is(true))
-                .log()
-                .all()
+                .log().all()
                 .when()
-                .post(url);
+                .post(baseURI + Endpoints.FAVOURITE_URL);
     }
 
     @DisplayName("Update Album title")
     @Test
     @Order(7)
     void testUpdateTitle() {
-        given().when()
-                .auth()
-                .oauth2(ImgurApiParams.TOKEN)
-                .log()
-                .all()
-                .formParam("title", "!!! NEW Title !!!")
+        given().spec(requestSpecification)
+                .when()
+                .log().all()
+                .formParam("title", "My new work album")
                 .expect()
-                .log()
-                .all()
-                .body("success", is(true))
-                .body("data", is(true))
+                .log().all()
+                .spec(responseSpecification)
                 .when()
                 .put(baseURI);
     }
@@ -143,74 +134,66 @@ public class ImgurApiAlbumTest {
     @Test
     @Order(8)
     void testAlbumImage() {
-        String url = "/image/" + ImgurApiParams.IMAGE_HASH;
-        given().when()
-                .auth()
-                .oauth2(ImgurApiParams.TOKEN)
-                .log()
-                .all()
-                .expect()
-                .body("data.title", is("The best pop art image"))
-                .body("data.id", is(ImgurApiParams.IMAGE_HASH))
-                .log()
-                .all()
+        ResponseSpecification responseSpecification = new ResponseSpecBuilder()
+                .expectBody("data.title", is("The best pop art image"))
+                .expectBody("data.id", is(ImgurApiParams.IMAGE_HASH))
+                .build();
+
+        given().spec(requestSpecification)
                 .when()
-                .get(url);
+                .log().all()
+                .expect()
+                .spec(responseSpecification)
+                .log().all()
+                .when()
+                .get(baseURI + Endpoints.ALBUM_URL);
     }
 
     @DisplayName("Add image to Album")
     @Test
     @Order(9)
     void testAddImage() {
-        String url = "/add";
-        given().when()
-                .auth()
-                .oauth2(ImgurApiParams.TOKEN)
-                .log()
-                .all()
+//        RequestSpecification imageRequestSpecification = new RequestSpecBuilder()
+//                .addHeader("Authorization", ImgurApiParams.TOKEN)
+//                .addFormParam("ids[]", "zNRHIng")
+//                .build();
+
+        given().spec(requestSpecification)
+                .when()
+                .log().all()
+                //.spec(imageRequestSpecification)
                 .formParam("ids[]", "zNRHIng")
                 .expect()
-                .log()
-                .all()
-                .body("success", is(true))
-                .body("data", is(true))
+                .log().all()
+                .spec(responseSpecification)
                 .when()
-                .post(url);
+                .post(baseURI + Endpoints.ADD_IMAGE_URL);
     }
 
     @DisplayName("Remove image from Album")
     @Test
     @Order(10)
     void testRemoveImage() {
-        String url = "/remove_images";
-        given().when()
-                .auth()
-                .oauth2(ImgurApiParams.TOKEN)
-                .log()
-                .all()
+        given().spec(requestSpecification)
+                .when()
+                .log().all()
                 .formParam("ids[]", "zNRHIng")
                 .expect()
-                .log()
-                .all()
-                .body("success", is(true))
-                .body("data", is(true))
+                .log().all()
+                .spec(responseSpecification)
                 .when()
-                .post(url);
+                .post(baseURI + Endpoints.REMOVE_IMAGE_URL);
     }
 
     @AfterAll
     static void tearDown() {
-        given().when()
-                .auth()
-                .oauth2(ImgurApiParams.TOKEN)
-                .log()
-                .all()
-                .formParam("title", "My new work album")
+        given().spec(requestSpecification)
+                .when()
+                .log().all()
+                .formParam("data.title", "My new work album")
                 .expect()
-                .log()
-                .all()
-                .body("success", is(true))
-                .body("data", is(true))
+                .log().all()
+                .spec(responseSpecification)
                 .when()
                 .put(baseURI);
     }
