@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "title": "Milk",
+    "price": 95,
+    "categoryTitle": "Food"
+  },
+  {
+    "id": 2,
+    "title": "Bread",
+    "price": 25,
+    "categoryTitle": "Food"
+  },
+  {
+    "id": 3,
+    "title": "Fish",
+    "price": 360,
+    "categoryTitle": "Food"
+  },
+  {
+    "id": 4,
+    "title": "Samsung Watch X1000",
+    "price": 20000,
+    "categoryTitle": "Electronic"
+  },
+  {
+    "id": 5,
+    "title": "LG TV 1",
+    "price": 50000,
+    "categoryTitle": "Electronic"
+  }
+]
