@@ -1,0 +1,37 @@
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <classPathEntry
+            location="/Users/Ира/.m2/repository/com/h2database/h2/1.4.200/h2-1.4.200.jar"/>
+
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <jdbcConnection driverClass="org.h2.Driver"
+                        connectionURL="jdbc:h2:C:/Users/Ира/Backend-Java/HW/mini-market"
+                        userId="sa"
+                        password="">
+        </jdbcConnection>
+
+        <javaModelGenerator targetPackage="com.geekbrains.db.model" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="com.geekbrains.db.mapper.xml" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.geekbrains.db.dao"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <table tableName="categories">
+            <generatedKey column="id" sqlStatement="DB2" identity="true"/>
+        </table>
+        <table tableName="products">
+            <generatedKey column="id" sqlStatement="DB2" identity="true"/>
+        </table>
+    </context>
+</generatorConfiguration>
