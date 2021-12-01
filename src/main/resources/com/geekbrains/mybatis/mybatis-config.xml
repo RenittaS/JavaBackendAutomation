@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <environments default="development"><!--в данном блоке настраиваются подключения к БД-->
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="org.h2.Driver"/>
+                <property name="url" value="jdbc:h2:C:/Users/Ира/Backend-Java/HW/mini-market"/>
+                <property name="username" value="sa"/>
+                <property name="password" value=""/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers><!--в данном блоке необходимо описать маперы, которые используются в проекте-->
+        <mapper resource="com/geekbrains/db/mapper/xml/CategoriesMapper.xml"/>
+        <mapper resource="com/geekbrains/db/mapper/xml/ProductsMapper.xml"/>
+    </mappers>
+</configuration>
