@@ -8,21 +8,21 @@
 
     <context id="DB2Tables" targetRuntime="MyBatis3">
         <jdbcConnection driverClass="org.h2.Driver"
-                        connectionURL="jdbc:h2:C:/Users/Ира/Backend-Java/HW/mini-market"
+                        connectionURL="jdbc:h2:C:/Users/Ира/_GeekBrains-Homeworks/JavaBackendAutomation/HW/mini-market"
                         userId="sa"
                         password="">
         </jdbcConnection>
 
-        <javaModelGenerator targetPackage="com.geekbrains.db.model" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="mybatis.db.model" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
 
-        <sqlMapGenerator targetPackage="com.geekbrains.db.mapper.xml" targetProject="src/main/java">
+        <sqlMapGenerator targetPackage="mybatis.db.mapper.xml" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
 
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.geekbrains.db.dao"
+        <javaClientGenerator type="XMLMAPPER" targetPackage="mybatis.db.dao"
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>

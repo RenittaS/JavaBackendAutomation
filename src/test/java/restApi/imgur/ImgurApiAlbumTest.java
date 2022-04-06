@@ -1,5 +1,7 @@
 package restApi.imgur;
 
+import dto.AccountInfoResponse;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
@@ -8,8 +10,9 @@ import io.restassured.specification.ResponseSpecification;
 import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.Matchers.lessThan;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ImgurApiAlbumTest {
@@ -26,12 +29,49 @@ public class ImgurApiAlbumTest {
 
     @BeforeAll
     static void beforeAll() {
-        RestAssured.baseURI = Endpoints.getBaseUri();
+        RestAssured.baseURI = Endpoints.getBaseUrl();
+        RestAssured.filters(new AllureRestAssured());
+    }
+
+    @DisplayName("Get Account base")
+    @Test
+    @Order(1)
+    void getAccountInfoSimpleTest() {
+        String url = given().spec(requestSpecification)
+                .when()
+                .get("https://api.imgur.com/3/account/" + ImgurApiParams.getUserName())
+                .prettyPeek()
+                .then()
+                .statusCode(200)
+                .extract()
+                .response()
+                .jsonPath()
+                .getString("data.url");
+        assertThat(url, equalTo(ImgurApiParams.getUserName()));
+    }
+
+    @DisplayName("Get Account base using POJO deserialization")
+    @Test
+    @Order(2)
+    void getAccountInfoSimpleTestJson() {
+        AccountInfoResponse response = given().spec(requestSpecification)
+                .when()
+                .get("https://api.imgur.com/3/account/" + ImgurApiParams.getUserName())
+                .prettyPeek()
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(AccountInfoResponse.class);
+
+        assertThat(response.getStatus(), equalTo(200));
+        assertThat(response.getData().getId(), equalTo(Integer.valueOf("156513005")));
+        assertThat(response.getData().getUrl(), containsString(ImgurApiParams.getUserName()));
     }
 
     @DisplayName("Status code is 200")
     @Test
-    @Order(1)
+    @Order(3)
     void testStatusCode() {
         given().spec(requestSpecification)
                 .when()
@@ -45,12 +85,11 @@ public class ImgurApiAlbumTest {
 
     @DisplayName("Response time is less than 5000ms")
     @Test
-    @Order(2)
+    @Order(4)
     void testResponseTime() {
         given().spec(requestSpecification)
                 .when()
                 .log().all()
-                //.then()
                 .expect()
                 .time(lessThan (5000L))
                 .log().all()
@@ -60,7 +99,7 @@ public class ImgurApiAlbumTest {
 
     @DisplayName("Id contains correct albumHash")
     @Test
-    @Order(3)
+    @Order(5)
     void testId() {
         given().spec(requestSpecification)
                 .when()
@@ -74,7 +113,7 @@ public class ImgurApiAlbumTest {
 
     @DisplayName("Title contains correct data")
     @Test
-    @Order(4)
+    @Order(6)
     void testTitle() {
         given().spec(requestSpecification)
                 .when()
@@ -88,7 +127,7 @@ public class ImgurApiAlbumTest {
 
     @DisplayName("Description contains correct data")
     @Test
-    @Order(5)
+    @Order(7)
     void testDescription() {
         given().spec(requestSpecification)
                 .when()
@@ -103,7 +142,7 @@ public class ImgurApiAlbumTest {
 
     @DisplayName("Set favourite Album is success")
     @Test
-    @Order(6)
+    @Order(8)
     void testSetFavouriteAlbum() {
         given().spec(requestSpecification)
                 .when()
@@ -117,7 +156,7 @@ public class ImgurApiAlbumTest {
 
     @DisplayName("Update Album title")
     @Test
-    @Order(7)
+    @Order(9)
     void testUpdateTitle() {
         given().spec(requestSpecification)
                 .when()
@@ -132,7 +171,7 @@ public class ImgurApiAlbumTest {
 
     @DisplayName("Get album image")
     @Test
-    @Order(8)
+    @Order(10)
     void testAlbumImage() {
         ResponseSpecification responseSpecification = new ResponseSpecBuilder()
                 .expectBody("data.title", is("The best pop art image"))
@@ -151,7 +190,7 @@ public class ImgurApiAlbumTest {
 
     @DisplayName("Add image to Album")
     @Test
-    @Order(9)
+    @Order(11)
     void testAddImage() {
         RequestSpecification requestSpecification = new RequestSpecBuilder()
                 .setAuth(oauth2(ImgurApiParams.getTOKEN()))
@@ -170,7 +209,7 @@ public class ImgurApiAlbumTest {
 
     @DisplayName("Remove image from Album")
     @Test
-    @Order(10)
+    @Order(12)
     void testRemoveImage() {
         RequestSpecification requestSpecification = new RequestSpecBuilder()
                 .setAuth(oauth2(ImgurApiParams.getTOKEN()))

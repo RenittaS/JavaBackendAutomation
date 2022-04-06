@@ -6,6 +6,7 @@ public final class ImgurApiParams {
     private static final String API_VER = "3";
     private static final String ALBUM_HASH = "mUtJOfL";
     private static final String IMAGE_HASH = "6Ph4wcz";
+    private static final String USERNAME = "shishkinapost";
 
     public static String getTOKEN() {
         return TOKEN;
@@ -21,5 +22,9 @@ public final class ImgurApiParams {
 
     public static String getImageHash() {
         return IMAGE_HASH;
+    }
+
+    public static String getUserName() {
+        return USERNAME;
     }
 }

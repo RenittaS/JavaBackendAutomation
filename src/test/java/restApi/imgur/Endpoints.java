@@ -10,7 +10,7 @@ public final class Endpoints {
     private static final String REMOVE_IMAGE_URL = "/remove_images";
     private static final String FAVOURITE_URL = "/favorite";
 
-    public static String getBaseUri() {
+    public static String getBaseUrl() {
         return BASE_URI;
     }
 
